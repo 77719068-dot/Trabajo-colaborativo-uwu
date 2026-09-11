@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Los Productos Notables - Carrera de Focas vs Unicornios | MATEMÁTICA PARA TI</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        lexend: ['Lexend', 'sans-serif'],
+                    },
+                    colors: {
+                        foca: {
+                            light: '#38bdf8',
+                            DEFAULT: '#0284c7',
+                            dark: '#0369a1'
+                        },
+                        unicorn: {
+                            light: '#f472b6',
+                            DEFAULT: '#db2777',
+                            dark: '#be185d'
+                        },
+                        mathyellow: '#f59e0b',
+                        mathpurple: '#8b5cf6'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .math-font {
+            font-family: 'Lexend', sans-serif;
+        }
+        .btn-bounce {
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .btn-bounce:active {
+            transform: scale(0.95);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.6)); }
+            50% { filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.9)); }
+        }
+        .glow-effect {
+            animation: pulseGlow 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+    <!-- TOP BRANDING & SOUND BAR -->
+    <header class="bg-slate-800/90 border-b border-slate-700 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-amber-500 to-yellow-300 p-2 rounded-xl text-slate-900 font-black text-xl shadow-lg shadow-amber-500/20">
+                    ∑
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-amber-400 tracking-wider uppercase block">MATEMÁTICA PARA TI</span>
+                    <h1 class="text-xl md:text-2xl font-extrabold text-white leading-none">
+                        Los Productos Notables <span class="text-amber-400">🦭 🏁 🦄</span>
+                    </h1>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button id="theoryBtn" onclick="toggleTheoryModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs md:text-sm px-3 py-2 rounded-xl transition flex items-center gap-1 border border-indigo-400/30">
+                    📖 <span class="hidden sm:inline">Guía de Fórmulas</span>
+                </button>
+                <button id="soundToggle" onclick="toggleSound()" class="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-xl text-sm transition border border-slate-600" title="Activar/Desactivar Sonido">
+                    🔊
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-6xl w-full mx-auto p-3 md:p-6 flex flex-col justify-center">
+
+        <!-- SCREEN 1: START & SETUP -->
+        <div id="setupScreen" class="bg-slate-800 border-2 border-slate-700 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden my-auto">
+            <div class="absolute -top-12 -right-12 w-40 h-40 bg-foca-light/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -left-12 w-40 h-40 bg-unicorn-light/10 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="text-center mb-8">
+                <span class="inline-block bg-amber-500/20 text-amber-300 text-sm font-bold px-4 py-1.5 rounded-full mb-3 border border-amber-500/30">
+                    🎮 Juego Educativo de Álgebra para Secundaria
+                </span>
+                <h2 class="text-3xl md:text-5xl font-black text-white mb-2 tracking-wide">
+                    ¡Gran Carrera Matémica!
+                </h2>
+                <p class="text-slate-300 text-base md:text-lg max-w-2xl mx-auto">
+                    Demuestra tu rapidez resolviendo binomios al cuadrado, diferencia de cuadrados y cubos. ¡El más rápido en responder avanza en la pista!
+                </p>
+            </div>
+
+            <!-- MODE SELECTOR -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-8">
+                <!-- 1 PLAYER MODE -->
+                <div id="mode1Card" onclick="selectMode(1)" class="cursor-pointer bg-slate-700/60 hover:bg-slate-700 border-2 border-slate-600 hover:border-sky-400 rounded-2xl p-5 transition text-center group relative overflow-hidden">
+                    <div class="text-5xl mb-3 group-hover:scale-110 transition duration-300">🦭 🤖</div>
+                    <h3 class="text-xl font-bold text-white mb-1">1 Jugador</h3>
+                    <p class="text-slate-300 text-xs">Juega como Foca 🦭 contra el Unicornio Bot 🤖</p>
+                </div>
+
+                <!-- 2 PLAYER MODE -->
+                <div id="mode2Card" onclick="selectMode(2)" class="cursor-pointer bg-slate-700/60 hover:bg-slate-700 border-2 border-amber-500 rounded-2xl p-5 transition text-center group relative overflow-hidden shadow-lg shadow-amber-500/10">
+                    <div class="absolute top-2 right-2 bg-amber-500 text-slate-900 text-xs font-black px-2.5 py-0.5 rounded-full">RECOMENDADO</div>
+                    <div class="text-5xl mb-3 group-hover:scale-110 transition duration-300">🦭 ⚡ 🦄</div>
+                    <h3 class="text-xl font-bold text-white mb-1">2 Jugadores (Mismo Teclado / Pantalla)</h3>
+                    <p class="text-slate-300 text-xs">¡Foca 🦭 vs Unicornio 🦄 compitiendo al mismo tiempo!</p>
+                </div>
+            </div>
+
+            <!-- PLAYER INPUTS & LEVEL SELECTION -->
+            <div class="max-w-2xl mx-auto bg-slate-900/80 rounded-2xl p-5 border border-slate-700 mb-8 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Player 1 Name -->
+                    <div>
+                        <label class="block text-xs font-bold text-sky-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                            <span>🦭</span> Jugador 1 (Foca)
+                        </label>
+                        <input type="text" id="p1NameInput" value="Focardo" maxlength="12" class="w-full bg-slate-800 border border-slate-600 focus:border-sky-400 text-white font-bold rounded-xl px-4 py-2.5 outline-none transition">
+                    </div>
+
+                    <!-- Player 2 Name -->
+                    <div id="p2NameContainer">
+                        <label class="block text-xs font-bold text-pink-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                            <span>🦄</span> Jugador 2 (Unicornio)
+                        </label>
+                        <input type="text" id="p2NameInput" value="Unicornia" maxlength="12" class="w-full bg-slate-800 border border-slate-600 focus:border-pink-400 text-white font-bold rounded-xl px-4 py-2.5 outline-none transition">
+                    </div>
+                </div>
+
+                <!-- Difficulty Level -->
+                <div>
+                    <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">
+                        🎯 Nivel de Dificultad Algebraica
+                    </label>
+                    <select id="diffSelect" class="w-full bg-slate-800 border border-slate-600 focus:border-amber-400 text-white font-semibold rounded-xl px-4 py-2.5 outline-none cursor-pointer">
+                        <option value="easy">Fácil: Binomio al Cuadrado y Suma por Diferencia (Básicos)</option>
+                        <option value="medium" selected>Medio: Incluye Cubo de Binomio y coeficientes</option>
+                        <option value="hard">Avanzado: Todos los productos notables con exponentes y fracciones</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- START BUTTON -->
+            <div class="text-center">
+                <button onclick="startGame()" class="btn-bounce bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-xl md:text-2xl px-10 py-4 rounded-2xl shadow-xl shadow-amber-500/25 transform hover:-translate-y-1 transition duration-200">
+                    🚀 ¡INICIAR CARRERA!
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: GAMEPLAY & RACE -->
+        <div id="gameScreen" class="hidden space-y-4">
+
+            <!-- RACE TRACK CANVAS -->
+            <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-4 shadow-xl relative overflow-hidden">
+                <div class="flex justify-between items-center mb-2 px-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <span class="text-sky-400">🏁 PISTA DE CARRERA EN VIVO</span>
+                    <span id="levelBadge" class="bg-amber-500/20 text-amber-400 px-3 py-1 rounded-full border border-amber-500/30">Nivel 1 de 10</span>
+                </div>
+
+                <!-- Canvas for Race Track -->
+                <div class="relative w-full h-36 bg-slate-900 rounded-xl overflow-hidden border border-slate-700">
+                    <canvas id="raceCanvas" class="w-full h-full block"></canvas>
+                </div>
+
+                <!-- PLAYERS DASHBOARD -->
+                <div class="grid grid-cols-2 gap-4 mt-3">
+                    <!-- P1 Stats -->
+                    <div class="bg-sky-950/40 border border-sky-500/30 rounded-xl p-3 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">🦭</span>
+                            <div>
+                                <h4 id="p1NameDisplay" class="font-extrabold text-sky-400 text-sm leading-none">Focardo</h4>
+                                <div id="p1Lives" class="text-sm mt-1">❤️❤️❤️</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-slate-400 block font-bold">PUNTOS</span>
+                            <span id="p1Score" class="text-2xl font-black text-white">0</span>
+                        </div>
+                    </div>
+
+                    <!-- P2 Stats -->
+                    <div class="bg-pink-950/40 border border-pink-500/30 rounded-xl p-3 flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">🦄</span>
+                            <div>
+                                <h4 id="p2NameDisplay" class="font-extrabold text-pink-400 text-sm leading-none">Unicornia</h4>
+                                <div id="p2Lives" class="text-sm mt-1">❤️❤️❤️</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-slate-400 block font-bold">PUNTOS</span>
+                            <span id="p2Score" class="text-2xl font-black text-white">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUESTION CARD -->
+            <div id="questionBox" class="bg-slate-800 border-2 border-amber-500/50 rounded-2xl p-5 shadow-2xl relative">
+                <!-- Question Type Tag -->
+                <div class="flex justify-between items-center mb-3">
+                    <span id="qCategory" class="bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 text-xs font-bold px-3 py-1 rounded-full uppercase">
+                        Cuadrado de un Binomio
+                    </span>
+                    <span id="p2BotStatus" class="hidden text-xs text-pink-400 font-bold animate-pulse">
+                        🤖 Bot pensando...
+                    </span>
+                </div>
+
+                <!-- Math Exercise Prompt -->
+                <div class="text-center py-2">
+                    <p class="text-xs font-bold text-slate-400 uppercase mb-1">Resuelve el producto notable:</p>
+                    <div id="qFormula" class="text-2xl md:text-4xl font-extrabold text-amber-300 math-font tracking-wide">
+                        (x + 5)²
+                    </div>
+                </div>
+
+                <!-- Controls Info for 2 Player mode -->
+                <div id="keyboardControlsInfo" class="text-center text-xs text-slate-400 mt-2 bg-slate-900/60 py-1.5 px-3 rounded-lg border border-slate-700/50">
+                    <span class="text-sky-400 font-bold">🦭 Jugador 1:</span> Presiona teclas <span class="bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-white font-mono">Q, W, E, R</span> | 
+                    <span class="text-pink-400 font-bold">🦄 Jugador 2:</span> Presiona teclas <span class="bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-white font-mono">1, 2, 3, 4</span> (o haz clic abajo)
+                </div>
+            </div>
+
+            <!-- CONTROLS SECTION (Split for 2 Players or Unified for 1 Player) -->
+            <div id="answersGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <!-- P1 ANSWER COL -->
+                <div id="p1AnswersCard" class="bg-slate-800/90 border border-sky-500/40 rounded-2xl p-4 shadow-lg">
+                    <div class="text-sky-400 text-xs font-extrabold mb-3 flex justify-between items-center border-b border-slate-700 pb-2">
+                        <span>🦭 RESPUESTAS - JUGADOR 1</span>
+                        <span class="text-slate-400 font-normal">Teclas: Q, W, E, R</span>
+                    </div>
+                    <div id="p1OptionsContainer" class="grid grid-cols-1 gap-2.5">
+                        <!-- Options generated dynamically -->
+                    </div>
+                </div>
+
+                <!-- P2 ANSWER COL -->
+                <div id="p2AnswersCard" class="bg-slate-800/90 border border-pink-500/40 rounded-2xl p-4 shadow-lg">
+                    <div class="text-pink-400 text-xs font-extrabold mb-3 flex justify-between items-center border-b border-slate-700 pb-2">
+                        <span id="p2Title">🦄 RESPUESTAS - JUGADOR 2</span>
+                        <span id="p2KeyHint" class="text-slate-400 font-normal">Teclas: 1, 2, 3, 4</span>
+                    </div>
+                    <div id="p2OptionsContainer" class="grid grid-cols-1 gap-2.5">
+                        <!-- Options generated dynamically -->
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- MODAL 1: EXPLANATION STEP-BY-STEP (When wrong answer) -->
+        <div id="explanationModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-slate-800 border-2 border-amber-500 rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4 relative animate-fade-in">
+                <div class="flex items-center gap-3 border-b border-slate-700 pb-3">
+                    <span class="text-3xl">💡</span>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-amber-400">Explicación Paso a Paso</h3>
+                        <p id="expPlayerText" class="text-xs text-slate-300">¡Aprende la fórmula para no fallar la próxima!</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl p-4 border border-slate-700 space-y-3">
+                    <div class="text-xs text-slate-400 uppercase font-bold">Fórmula Utilizada:</div>
+                    <div id="expFormula" class="bg-slate-800 text-amber-300 font-extrabold p-2.5 rounded-xl text-center text-lg math-font border border-amber-500/30">
+                        (a + b)² = a² + 2ab + b²
+                    </div>
+
+                    <div class="text-xs text-slate-400 uppercase font-bold mt-2">Procedimiento detallado:</div>
+                    <div id="expSteps" class="text-sm text-slate-200 space-y-2 font-mono bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <!-- Dynamic steps -->
+                    </div>
+
+                    <div class="bg-indigo-950/50 border border-indigo-500/30 rounded-xl p-3 text-xs text-indigo-300 flex items-start gap-2">
+                        <span class="text-base">📌</span>
+                        <span id="expTip">¡Recuerda que el término central siempre multiplica los dos términos por 2!</span>
+                    </div>
+                </div>
+
+                <div class="text-center pt-2">
+                    <button onclick="closeExplanationModal()" class="btn-bounce bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-8 py-3 rounded-xl text-base shadow-lg transition">
+                        ¡Entendido, Continuar Carrera! 🏎️
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL 2: SURPRISE CHALLENGE (Desafío Sorpresa) -->
+        <div id="surpriseModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-gradient-to-b from-slate-800 to-slate-900 border-2 border-amber-400 rounded-3xl max-w-lg w-full p-6 shadow-2xl text-center space-y-5 relative overflow-hidden">
+                <div class="absolute -top-10 -left-10 w-32 h-32 bg-amber-500/20 rounded-full blur-xl pointer-events-none"></div>
+
+                <div class="inline-block bg-amber-400 text-slate-950 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest glow-effect">
+                    ⚡ ¡DESAFÍO SORPRESA EXPRÉS! ⚡
+                </div>
+
+                <h3 id="surpriseTitle" class="text-2xl font-black text-white">
+                    ¡Doble Puntuación + Turbo Nitro!
+                </h3>
+
+                <p id="surpriseDesc" class="text-slate-300 text-sm">
+                    El primero en responder correctamente este reto veloz ganará un impulso extra en la pista.
+                </p>
+
+                <div id="surprisePrompt" class="bg-slate-950 border border-amber-500/40 rounded-2xl p-4 text-2xl font-black text-amber-300 math-font">
+                    ¿Es verdadero o falso que (x - 4)(x + 4) = x² - 16?
+                </div>
+
+                <div id="surpriseAnswersGrid" class="grid grid-cols-2 gap-3 max-w-xs mx-auto">
+                    <button onclick="answerSurprise(true)" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3 px-4 rounded-xl text-lg transition btn-bounce">
+                        VERDADERO
+                    </button>
+                    <button onclick="answerSurprise(false)" class="bg-rose-600 hover:bg-rose-500 text-white font-extrabold py-3 px-4 rounded-xl text-lg transition btn-bounce">
+                        FALSO
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL 3: THEORY FORMULAS REFERENCE -->
+        <div id="theoryModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-slate-800 border-2 border-indigo-500 rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">📘</span>
+                        <h3 class="text-xl font-extrabold text-white">Guía Rápida de Productos Notables</h3>
+                    </div>
+                    <button onclick="toggleTheoryModal()" class="text-slate-400 hover:text-white font-bold text-xl px-2">✕</button>
+                </div>
+
+                <div class="space-y-3 text-sm">
+                    <!-- Formula 1 -->
+                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700">
+                        <span class="text-xs font-bold text-sky-400 uppercase block mb-1">1. Cuadrado de un Binomio (Suma)</span>
+                        <div class="text-amber-300 font-extrabold math-font text-base mb-1">(a + b)² = a² + 2ab + b²</div>
+                        <p class="text-xs text-slate-300">Ejemplo: (x + 3)² = x² + 2(x)(3) + 3² = x² + 6x + 9</p>
+                    </div>
+
+                    <!-- Formula 2 -->
+                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700">
+                        <span class="text-xs font-bold text-pink-400 uppercase block mb-1">2. Cuadrado de una Diferencia</span>
+                        <div class="text-amber-300 font-extrabold math-font text-base mb-1">(a - b)² = a² - 2ab + b²</div>
+                        <p class="text-xs text-slate-300">Ejemplo: (x - 4)² = x² - 2(x)(4) + 4² = x² - 8x + 16</p>
+                    </div>
+
+                    <!-- Formula 3 -->
+                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700">
+                        <span class="text-xs font-bold text-emerald-400 uppercase block mb-1">3. Suma por Diferencia (Diferencia de Cuadrados)</span>
+                        <div class="text-amber-300 font-extrabold math-font text-base mb-1">(a + b)(a - b) = a² - b²</div>
+                        <p class="text-xs text-slate-300">Ejemplo: (x + 5)(x - 5) = x² - 5² = x² - 25</p>
+                    </div>
+
+                    <!-- Formula 4 -->
+                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700">
+                        <span class="text-xs font-bold text-indigo-400 uppercase block mb-1">4. Cubo de un Binomio (Suma)</span>
+                        <div class="text-amber-300 font-extrabold math-font text-base mb-1">(a + b)³ = a³ + 3a²b + 3ab² + b³</div>
+                        <p class="text-xs text-slate-300">Ejemplo: (x + 2)³ = x³ + 3(x²)(2) + 3(x)(4) + 8 = x³ + 6x² + 12x + 8</p>
+                    </div>
+
+                    <!-- Formula 5 -->
+                    <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700">
+                        <span class="text-xs font-bold text-amber-400 uppercase block mb-1">5. Cubo de una Diferencia</span>
+                        <div class="text-amber-300 font-extrabold math-font text-base mb-1">(a - b)³ = a³ - 3a²b + 3ab² - b³</div>
+                        <p class="text-xs text-slate-300">Los signos se intercalan: (+, -, +, -).</p>
+                    </div>
+                </div>
+
+                <div class="text-center pt-2">
+                    <button onclick="toggleTheoryModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-2 rounded-xl text-sm transition">
+                        Cerrar Guía
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: RESULTS SCREEN -->
+        <div id="resultsScreen" class="hidden bg-slate-800 border-2 border-amber-500 rounded-3xl p-6 md:p-10 shadow-2xl text-center space-y-6 my-auto relative overflow-hidden">
+            <div class="inline-block bg-amber-500/20 text-amber-400 text-xs font-bold px-4 py-1.5 rounded-full border border-amber-500/30">
+                🏁 ¡CARRERA FINALIZADA!
+            </div>
+
+            <!-- Trophy Icon & Winner Announcement -->
+            <div class="space-y-2">
+                <div id="winnerEmoji" class="text-7xl animate-bounce">🏆</div>
+                <h2 id="winnerText" class="text-3xl md:text-5xl font-black text-white">
+                    ¡Focardo es el Campeón!
+                </h2>
+                <p id="winnerSubtext" class="text-slate-300 text-base max-w-md mx-auto">
+                    ¡Gran dominio de los productos notables y excelente velocidad de cálculo!
+                </p>
+            </div>
+
+            <!-- SCOREBOARD SUMMARY -->
+            <div class="grid grid-cols-2 gap-4 max-w-md mx-auto bg-slate-900/80 p-4 rounded-2xl border border-slate-700">
+                <!-- P1 Final Score -->
+                <div class="text-center p-2 border-r border-slate-700">
+                    <span class="text-2xl block mb-1">🦭</span>
+                    <span id="p1ResultName" class="text-xs font-bold text-sky-400 block">Focardo</span>
+                    <span id="p1ResultScore" class="text-2xl font-black text-white">120 pts</span>
+                </div>
+                <!-- P2 Final Score -->
+                <div class="text-center p-2">
+                    <span class="text-2xl block mb-1">🦄</span>
+                    <span id="p2ResultName" class="text-xs font-bold text-pink-400 block">Unicornia</span>
+                    <span id="p2ResultScore" class="text-2xl font-black text-white">90 pts</span>
+                </div>
+            </div>
+
+            <!-- PERFORMANCE EVALUATION MESSAGE -->
+            <div id="perfBadge" class="bg-slate-900 p-4 rounded-2xl border border-amber-500/30 max-w-md mx-auto text-sm text-slate-200">
+                ⭐ <span class="font-bold text-amber-400">Nivel Algebraico:</span> ¡Maestro de la Factorización y Expansión!
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="flex flex-wrap justify-center gap-4 pt-2">
+                <button onclick="restartGame()" class="btn-bounce bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-lg px-8 py-3.5 rounded-2xl shadow-lg transition">
+                    🔄 Jugar Otra Vez
+                </button>
+                <button onclick="showSetupScreen()" class="btn-bounce bg-slate-700 hover:bg-slate-600 text-white font-bold text-base px-6 py-3.5 rounded-2xl border border-slate-600 transition">
+                    ⚙️ Cambiar Ajustes
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER BRANDING -->
+    <footer class="bg-slate-950 border-t border-slate-800 text-center py-3 text-xs text-slate-300">
+        <p>MATEMÁTICA PARA TI • Proyecto Educativo de Álgebra Interactiva</p>
+    </footer>
+
+    <script>
+        /* --- AUDIO SYNTHESIS SYSTEM (Web Audio API) --- */
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundToggle').innerText = soundEnabled ? '🔊' : '🔇';
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.2); // A5
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now); // A3
+                osc.frequency.exponentialRampToValueAtTime(110, now + 0.3); // A2
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } else if (type === 'fanfare') {
+                // Short victory chime
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                    const noteOsc = audioCtx.createOscillator();
+                    const noteGain = audioCtx.createGain();
+                    noteOsc.connect(noteGain);
+                    noteGain.connect(audioCtx.destination);
+                    noteOsc.frequency.value = freq;
+                    noteGain.gain.setValueAtTime(0.15, now + i * 0.1);
+                    noteGain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.3);
+                    noteOsc.start(now + i * 0.1);
+                    noteOsc.stop(now + i * 0.1 + 0.3);
+                });
+            } else if (type === 'boost') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.linearRampToValueAtTime(600, now + 0.15);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now);
+                osc.stop(now + 0.2);
+            }
+        }
+
+        /* --- GAME DATABASE & EXERCISE GENERATOR --- */
+        // Special Products categories:
+        // 1. Binomio al cuadrado (Suma): (a+b)^2 = a^2 + 2ab + b^2
+        // 2. Binomio al cuadrado (Resta): (a-b)^2 = a^2 - 2ab + b^2
+        // 3. Suma por diferencia: (a+b)(a-b) = a^2 - b^2
+        // 4. Cubo de un binomio (Suma): (a+b)^3 = a^3 + 3a^2b + 3ab^2 + b^3
+        // 5. Cubo de un binomio (Resta): (a-b)^3 = a^3 - 3a^2b + 3ab^2 - b^3
+
+        const questionBank = [
+            // Level 1: Binomio al cuadrado (Easy)
+            {
+                type: 'Cuadrado de un Binomio',
+                formula: '(x + 3)²',
+                correct: 'x² + 6x + 9',
+                options: ['x² + 6x + 9', 'x² + 9', 'x² + 3x + 9', 'x² + 6x + 6'],
+                expFormula: '(a + b)² = a² + 2ab + b²',
+                expSteps: [
+                    '1. Cuadrado del primer término: (x)² = x²',
+                    '2. Doble del primero por el segundo: 2 · (x) · (3) = 6x',
+                    '3. Cuadrado del segundo término: (3)² = 9',
+                    'Resultado: x² + 6x + 9'
+                ],
+                tip: '¡No olvides incluir el término central 2ab!'
+            },
+            {
+                type: 'Cuadrado de una Diferencia',
+                formula: '(x - 5)²',
+                correct: 'x² - 10x + 25',
+                options: ['x² - 10x + 25', 'x² - 25', 'x² + 10x + 25', 'x² - 5x + 25'],
+                expFormula: '(a - b)² = a² - 2ab + b²',
+                expSteps: [
+                    '1. Cuadrado del primero: (x)² = x²',
+                    '2. Menos doble del primero por el segundo: - 2 · (x) · (5) = -10x',
+                    '3. Cuadrado del segundo (siempre positivo): (-5)² = +25',
+                    'Resultado: x² - 10x + 25'
+                ],
+                tip: 'El último término siempre es positivo porque (-b)² = +b².'
+            },
+            {
+                type: 'Suma por Diferencia',
+                formula: '(x + 4)(x - 4)',
+                correct: 'x² - 16',
+                options: ['x² - 16', 'x² + 16', 'x² - 8x + 16', 'x² - 8'],
+                expFormula: '(a + b)(a - b) = a² - b²',
+                expSteps: [
+                    '1. Cuadrado del primer término: (x)² = x²',
+                    '2. Menos cuadrado del segundo término: (4)² = 16',
+                    'Resultado: x² - 16'
+                ],
+                tip: 'Los términos centrales +4x y -4x se cancelan mutuamente.'
+            },
+            // Medium
+            {
+                type: 'Cuadrado con Coeficiente',
+                formula: '(2x + 3)²',
+                correct: '4x² + 12x + 9',
+                options: ['4x² + 12x + 9', '2x² + 12x + 9', '4x² + 6x + 9', '4x² + 9'],
+                expFormula: '(a + b)² = a² + 2ab + b²',
+                expSteps: [
+                    '1. Cuadrado de (2x): (2x)² = 4x²',
+                    '2. Doble producto: 2 · (2x) · (3) = 12x',
+                    '3. Cuadrado del segundo: (3)² = 9',
+                    'Resultado: 4x² + 12x + 9'
+                ],
+                tip: '¡Recuerda elevar el número 2 al cuadrado también!'
+            },
+            {
+                type: 'Cubo de un Binomio (Suma)',
+                formula: '(x + 2)³',
+                correct: 'x³ + 6x² + 12x + 8',
+                options: ['x³ + 6x² + 12x + 8', 'x³ + 8', 'x³ + 6x + 8', 'x³ + 2x² + 4x + 8'],
+                expFormula: '(a + b)³ = a³ + 3a²b + 3ab² + b³',
+                expSteps: [
+                    '1. Cubo del primero: x³',
+                    '2. Triple del primero al cuadrado por el segundo: 3 · (x²) · (2) = 6x²',
+                    '3. Triple del primero por el segundo al cuadrado: 3 · (x) · (2²) = 12x',
+                    '4. Cubo del segundo: 2³ = 8',
+                    'Resultado: x³ + 6x² + 12x + 8'
+                ],
+                tip: 'Aplica el patrón de coeficientes 1, 3, 3, 1.'
+            },
+            {
+                type: 'Cubo de una Diferencia',
+                formula: '(x - 1)³',
+                correct: 'x³ - 3x² + 3x - 1',
+                options: ['x³ - 3x² + 3x - 1', 'x³ - 1', 'x³ - 3x² - 3x - 1', 'x³ + 3x² - 3x + 1'],
+                expFormula: '(a - b)³ = a³ - 3a²b + 3ab² - b³',
+                expSteps: [
+                    '1. Cubo del primero: x³',
+                    '2. Signos intercalados: (+, -, +, -)',
+                    '3. Términos: -3(x²)(1) = -3x², +3(x)(1²) = +3x, -(1)³ = -1',
+                    'Resultado: x³ - 3x² + 3x - 1'
+                ],
+                tip: 'Observa que los signos van alternando: positivo, negativo, positivo, negativo.'
+            },
+            {
+                type: 'Suma por Diferencia',
+                formula: '(3x + 2)(3x - 2)',
+                correct: '9x² - 4',
+                options: ['9x² - 4', '9x² + 4', '3x² - 4', '9x² - 12x + 4'],
+                expFormula: '(a + b)(a - b) = a² - b²',
+                expSteps: [
+                    '1. Cuadrado de (3x): (3x)² = 9x²',
+                    '2. Menos cuadrado de (2): (2)² = 4',
+                    'Resultado: 9x² - 4'
+                ],
+                tip: 'Eleva tanto el coeficiente como la variable.'
+            },
+            // Advanced
+            {
+                type: 'Cuadrado con dos variables',
+                formula: '(x - 2y)²',
+                correct: 'x² - 4xy + 4y²',
+                options: ['x² - 4xy + 4y²', 'x² - 4y²', 'x² - 2xy + 4y²', 'x² + 4xy + 4y²'],
+                expFormula: '(a - b)² = a² - 2ab + b²',
+                expSteps: [
+                    '1. Primero al cuadrado: x²',
+                    '2. Doble producto: - 2 · (x) · (2y) = -4xy',
+                    '3. Segundo al cuadrado: (2y)² = 4y²',
+                    'Resultado: x² - 4xy + 4y²'
+                ],
+                tip: 'No olvides multiplicar las dos variables en el término medio.'
+            },
+            {
+                type: 'Diferencia de Cuadrados Avanzada',
+                formula: '(2x² + 5)(2x² - 5)',
+                correct: '4x⁴ - 25',
+                options: ['4x⁴ - 25', '4x² - 25', '2x⁴ - 25', '4x⁴ + 25'],
+                expFormula: '(a + b)(a - b) = a² - b²',
+                expSteps: [
+                    '1. Cuadrado de (2x²): (2x²)² = 4x⁴ (se multiplican los exponentes)',
+                    '2. Menos cuadrado de (5): 5² = 25',
+                    'Resultado: 4x⁴ - 25'
+                ],
+                tip: 'Al elevar (x²)² los exponentes se multiplican: 2 · 2 = 4.'
+            },
+            {
+                type: 'Cubo de Binomio con Coeficiente',
+                formula: '(2x + 1)³',
+                correct: '8x³ + 12x² + 6x + 1',
+                options: ['8x³ + 12x² + 6x + 1', '8x³ + 1', '6x³ + 6x² + 6x + 1', '8x³ + 6x² + 12x + 1'],
+                expFormula: '(a + b)³ = a³ + 3a²b + 3ab² + b³',
+                expSteps: [
+                    '1. (2x)³ = 8x³',
+                    '2. 3 · (2x)² · (1) = 3 · 4x² · 1 = 12x²',
+                    '3. 3 · (2x) · (1)² = 6x',
+                    '4. (1)³ = 1',
+                    'Resultado: 8x³ + 12x² + 6x + 1'
+                ],
+                tip: 'Resuelve primero las potencias antes de multiplicar por 3.'
+            }
+        ];
+
+        /* --- GAME STATE VARIABLES --- */
+        let gameMode = 2; // 1 = vs Bot, 2 = 2 Players
+        let currentQuestionIndex = 0;
+        let totalQuestions = 10;
+        let activeQuestionsList = [];
+
+        let p1 = { name: 'Focardo', score: 0, lives: 3, pos: 0, frozen: false };
+        let p2 = { name: 'Unicornia', score: 0, lives: 3, pos: 0, frozen: false };
+
+        let botTimer = null;
+        let isSurpriseRound = false;
+
+        /* --- STREAMING_CHUNK:Implementing Setup and Navigation Functions... --- */
+        function selectMode(mode) {
+            gameMode = mode;
+            const m1 = document.getElementById('mode1Card');
+            const m2 = document.getElementById('mode2Card');
+            const p2Container = document.getElementById('p2NameContainer');
+
+            if (mode === 1) {
+                m1.classList.add('border-sky-400', 'bg-slate-700');
+                m1.classList.remove('border-slate-600');
+                m2.classList.remove('border-amber-500', 'bg-slate-700');
+                m2.classList.add('border-slate-600');
+                document.getElementById('p2NameInput').value = 'Unicornio Bot 🤖';
+            } else {
+                m2.classList.add('border-amber-500', 'bg-slate-700');
+                m2.classList.remove('border-slate-600');
+                m1.classList.remove('border-sky-400', 'bg-slate-700');
+                m1.classList.add('border-slate-600');
+                document.getElementById('p2NameInput').value = 'Unicornia';
+            }
+        }
+
+        function startGame() {
+            initAudio();
+            p1.name = document.getElementById('p1NameInput').value.trim() || 'Focardo';
+            p2.name = document.getElementById('p2NameInput').value.trim() || (gameMode === 1 ? 'Unicornio Bot' : 'Unicornia');
+
+            p1.score = 0; p1.lives = 3; p1.pos = 0; p1.frozen = false;
+            p2.score = 0; p2.lives = 3; p2.pos = 0; p2.frozen = false;
+
+            // Prepare questions based on difficulty or shuffle
+            activeQuestionsList = [...questionBank].sort(() => 0.5 - Math.random()).slice(0, totalQuestions);
+            currentQuestionIndex = 0;
+
+            // Update UI Displays
+            document.getElementById('p1NameDisplay').innerText = p1.name;
+            document.getElementById('p2NameDisplay').innerText = p2.name;
+
+            if (gameMode === 1) {
+                document.getElementById('p2Title').innerText = '🤖 RESPUESTAS - BOT';
+                document.getElementById('p2KeyHint').innerText = 'Automático';
+                document.getElementById('keyboardControlsInfo').innerHTML = `<span class="text-sky-400 font-bold">🦭 Jugador 1 (${p1.name}):</span> Haz clic o usa teclas Q, W, E, R`;
+            } else {
+                document.getElementById('p2Title').innerText = `🦄 RESPUESTAS - ${p2.name.toUpperCase()}`;
+                document.getElementById('p2KeyHint').innerText = 'Teclas: 1, 2, 3, 4';
+                document.getElementById('keyboardControlsInfo').innerHTML = `<span class="text-sky-400 font-bold">🦭 ${p1.name}:</span> [Q, W, E, R] | <span class="text-pink-400 font-bold">🦄 ${p2.name}:</span> [1, 2, 3, 4]`;
+            }
+
+            document.getElementById('setupScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+
+            updateLivesUI();
+            updateScoresUI();
+            initRaceCanvas();
+            loadQuestion();
+        }
+
+        function updateLivesUI() {
+            document.getElementById('p1Lives').innerText = '❤️'.repeat(Math.max(0, p1.lives)) + '🖤'.repeat(Math.max(0, 3 - p1.lives));
+            document.getElementById('p2Lives').innerText = '❤️'.repeat(Math.max(0, p2.lives)) + '🖤'.repeat(Math.max(0, 3 - p2.lives));
+        }
+
+        function updateScoresUI() {
+            document.getElementById('p1Score').innerText = p1.score;
+            document.getElementById('p2Score').innerText = p2.score;
+        }
+
+        /* --- STREAMING_CHUNK:Implementing Canvas Animation Engine... --- */
+        let canvas, ctx;
+        let animFrameId = null;
+
+        function initRaceCanvas() {
+            canvas = document.getElementById('raceCanvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            if (!animFrameId) {
+                requestAnimationFrame(drawRaceTrack);
+            }
+        }
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+
+        function drawRaceTrack() {
+            if (!ctx) return;
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Clear Background (Ice & Rainbow Track)
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, w, h);
+
+            // Track 1 (Seal / Ice)
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(10, 10, w - 20, h / 2 - 15);
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([8, 8]);
+            ctx.strokeRect(10, 10, w - 20, h / 2 - 15);
+
+            // Track 2 (Unicorn / Rainbow)
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(10, h / 2 + 5, w - 20, h / 2 - 15);
+            ctx.strokeStyle = '#f472b6';
+            ctx.strokeRect(10, h / 2 + 5, w - 20, h / 2 - 15);
+            ctx.setLineDash([]);
+
+            // Finish Line
+            const finishX = w - 50;
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(finishX, 10, 8, h - 20);
+            ctx.font = '16px serif';
+            ctx.fillText('🏁', finishX - 5, h / 2 + 5);
+
+            // Calculate character positions
+            const startX = 35;
+            const maxDistance = finishX - startX - 20;
+
+            const p1X = startX + (p1.pos / totalQuestions) * maxDistance;
+            const p2X = startX + (p2.pos / totalQuestions) * maxDistance;
+
+            // Draw Seal Avatar (P1)
+            ctx.font = '28px serif';
+            ctx.fillText('🦭', p1X, h / 4 + 8);
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = 'bold 10px Lexend';
+            ctx.fillText(p1.name, p1X - 5, 22);
+
+            // Draw Unicorn Avatar (P2)
+            ctx.font = '28px serif';
+            ctx.fillText('🦄', p2X, (3 * h) / 4 + 8);
+            ctx.fillStyle = '#f472b6';
+            ctx.font = 'bold 10px Lexend';
+            ctx.fillText(p2.name, p2X - 5, h / 2 + 18);
+
+            animFrameId = requestAnimationFrame(drawRaceTrack);
+        }
+
+        /* --- STREAMING_CHUNK:Implementing Question and Answer Logic... --- */
+        function loadQuestion() {
+            if (currentQuestionIndex >= totalQuestions || (p1.lives <= 0 && p2.lives <= 0)) {
+                endGame();
+                return;
+            }
+
+            // Check if triggers a Surprise Challenge every 4 questions
+            if (currentQuestionIndex > 0 && currentQuestionIndex % 4 === 0 && !isSurpriseRound) {
+                triggerSurpriseModal();
+                return;
+            }
+
+            isSurpriseRound = false;
+            const q = activeQuestionsList[currentQuestionIndex];
+
+            document.getElementById('levelBadge').innerText = `Ejercicio ${currentQuestionIndex + 1} de ${totalQuestions}`;
+            document.getElementById('qCategory').innerText = q.type;
+            document.getElementById('qFormula').innerText = q.formula;
+
+            // Render options for Player 1
+            const p1Container = document.getElementById('p1OptionsContainer');
+            p1Container.innerHTML = '';
+
+            const p2Container = document.getElementById('p2OptionsContainer');
+            p2Container.innerHTML = '';
+
+            const keyLabelsP1 = ['Q', 'W', 'E', 'R'];
+            const keyLabelsP2 = ['1', '2', '3', '4'];
+
+            // Shuffle options visually while keeping track of correct index
+            const shuffledOptions = [...q.options].sort(() => 0.5 - Math.random());
+
+            shuffledOptions.forEach((opt, idx) => {
+                // P1 Button
+                const btn1 = document.createElement('button');
+                btn1.className = 'w-full bg-slate-700/80 hover:bg-sky-600 text-white font-bold p-3 rounded-xl border border-slate-600 text-left flex justify-between items-center text-sm md:text-base btn-bounce transition';
+                btn1.innerHTML = `<span>${opt}</span> <span class="bg-slate-900/60 text-sky-400 text-xs px-2 py-1 rounded font-mono">${keyLabelsP1[idx]}</span>`;
+                btn1.onclick = () => handleAnswer(1, opt, q);
+                p1Container.appendChild(btn1);
+
+                // P2 Button
+                if (gameMode === 2) {
+                    const btn2 = document.createElement('button');
+                    btn2.className = 'w-full bg-slate-700/80 hover:bg-pink-600 text-white font-bold p-3 rounded-xl border border-slate-600 text-left flex justify-between items-center text-sm md:text-base btn-bounce transition';
+                    btn2.innerHTML = `<span>${opt}</span> <span class="bg-slate-900/60 text-pink-400 text-xs px-2 py-1 rounded font-mono">${keyLabelsP2[idx]}</span>`;
+                    btn2.onclick = () => handleAnswer(2, opt, q);
+                    p2Container.appendChild(btn2);
+                }
+            });
+
+            if (gameMode === 1) {
+                p2Container.innerHTML = `
+                    <div class="bg-slate-900/50 p-6 rounded-xl border border-slate-700 text-center text-slate-400 text-xs">
+                        <span class="text-2xl block mb-2">🤖</span>
+                        El Bot responderá automáticamente en unos segundos...
+                    </div>
+                `;
+                document.getElementById('p2BotStatus').classList.remove('hidden');
+                scheduleBotAnswer(q);
+            } else {
+                document.getElementById('p2BotStatus').classList.add('hidden');
+            }
+        }
+
+        function scheduleBotAnswer(q) {
+            clearTimeout(botTimer);
+            // Bot speed varies between 3.5s to 7s
+            const time = Math.floor(Math.random() * 3500) + 3500;
+            botTimer = setTimeout(() => {
+                if (document.getElementById('gameScreen').classList.contains('hidden')) return;
+                // Bot accuracy: 75%
+                const isCorrect = Math.random() < 0.75;
+                const chosen = isCorrect ? q.correct : q.options.find(o => o !== q.correct);
+                handleAnswer(2, chosen, q);
+            }, time);
+        }
+
+        function handleAnswer(playerNum, selectedOption, q) {
+            clearTimeout(botTimer);
+
+            const isP1 = playerNum === 1;
+            const player = isP1 ? p1 : p2;
+
+            if (player.lives <= 0 || player.frozen) return;
+
+            if (selectedOption === q.correct) {
+                // Correct Answer!
+                playSound('correct');
+                playSound('boost');
+
+                player.score += 20;
+                player.pos += 1;
+                updateScoresUI();
+
+                // Move to next question after small delay
+                currentQuestionIndex++;
+                setTimeout(() => {
+                    loadQuestion();
+                }, 400);
+
+            } else {
+                // Wrong Answer!
+                playSound('wrong');
+                player.lives -= 1;
+                updateLivesUI();
+
+                // Temporarily freeze player
+                player.frozen = true;
+                setTimeout(() => { player.frozen = false; }, 3000);
+
+                // Show step-by-step educational explanation modal
+                showExplanationModal(player.name, q);
+            }
+        }
+
+        /* --- STREAMING_CHUNK:Implementing Modals and Keyboard Events... --- */
+        function showExplanationModal(playerName, q) {
+            document.getElementById('expPlayerText').innerText = `Respuesta incorrecta para ${playerName}. ¡Repasemos el procedimiento!`;
+            document.getElementById('expFormula').innerText = q.expFormula;
+
+            const stepsContainer = document.getElementById('expSteps');
+            stepsContainer.innerHTML = q.expSteps.map(s => `<p class="py-0.5">• ${s}</p>`).join('');
+
+            document.getElementById('expTip').innerText = q.tip;
+            document.getElementById('explanationModal').classList.remove('hidden');
+        }
+
+        function closeExplanationModal() {
+            document.getElementById('explanationModal').classList.add('hidden');
+            // Advance question or reload if both lost life
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function triggerSurpriseModal() {
+            isSurpriseRound = true;
+            playSound('fanfare');
+
+            document.getElementById('surpriseModal').classList.remove('hidden');
+        }
+
+        function answerSurprise(userAnswer) {
+            document.getElementById('surpriseModal').classList.add('hidden');
+            // Correct answer for (x-4)(x+4) = x^2 - 16 is TRUE
+            if (userAnswer === true) {
+                playSound('correct');
+                p1.score += 30;
+                p1.pos += 1;
+                updateScoresUI();
+            } else {
+                playSound('wrong');
+            }
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function toggleTheoryModal() {
+            const modal = document.getElementById('theoryModal');
+            modal.classList.toggle('hidden');
+        }
+
+        // KEYBOARD CONTROLS LISTENERS
+        window.addEventListener('keydown', (e) => {
+            if (document.getElementById('gameScreen').classList.contains('hidden')) return;
+            if (!document.getElementById('explanationModal').classList.contains('hidden')) return;
+
+            const key = e.key.toUpperCase();
+            const q = activeQuestionsList[currentQuestionIndex];
+            if (!q) return;
+
+            // P1 Keys: Q, W, E, R
+            const p1Keys = ['Q', 'W', 'E', 'R'];
+            const p1Index = p1Keys.indexOf(key);
+            if (p1Index !== -1) {
+                const opts = document.querySelectorAll('#p1OptionsContainer button');
+                if (opts[p1Index]) opts[p1Index].click();
+            }
+
+            // P2 Keys: 1, 2, 3, 4 (Only in 2 Player Mode)
+            if (gameMode === 2) {
+                const p2Keys = ['1', '2', '3', '4'];
+                const p2Index = p2Keys.indexOf(key);
+                if (p2Index !== -1) {
+                    const opts = document.querySelectorAll('#p2OptionsContainer button');
+                    if (opts[p2Index]) opts[p2Index].click();
+                }
+            }
+        });
+
+        /* --- STREAMING_CHUNK:Implementing Results Screen and Game Restart... --- */
+        function endGame() {
+            playSound('fanfare');
+
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+
+            // Determine winner
+            let winnerText = '';
+            let winnerEmoji = '🏆';
+            let winnerSubtext = '';
+
+            if (p1.score > p2.score) {
+                winnerEmoji = '🦭🏆';
+                winnerText = `¡${p1.name} es el Campeón!`;
+                winnerSubtext = `¡Excelente trabajo de la Foca dominando las fórmulas algebraicas!`;
+            } else if (p2.score > p1.score) {
+                winnerEmoji = '🦄🏆';
+                winnerText = `¡${p2.name} es el Campeón!`;
+                winnerSubtext = `¡La velocidad del Unicornio triunfó en la carrera de productos notables!`;
+            } else {
+                winnerEmoji = '🤝';
+                winnerText = '¡Empate Legendario!';
+                winnerSubtext = '¡Ambos demostraron una rapidez increíble resolviendo ejercicios!';
+            }
+
+            document.getElementById('winnerEmoji').innerText = winnerEmoji;
+            document.getElementById('winnerText').innerText = winnerText;
+            document.getElementById('winnerSubtext').innerText = winnerSubtext;
+
+            document.getElementById('p1ResultName').innerText = p1.name;
+            document.getElementById('p1ResultScore').innerText = `${p1.score} pts`;
+
+            document.getElementById('p2ResultName').innerText = p2.name;
+            document.getElementById('p2ResultScore').innerText = `${p2.score} pts`;
+
+            // Performance message rating
+            const totalScore = Math.max(p1.score, p2.score);
+            let perfText = '';
+            if (totalScore >= 120) {
+                perfText = '⭐ ¡Nivel Maestro del Álgebra! Aplican productos notables a la perfección.';
+            } else if (totalScore >= 70) {
+                perfText = '👍 ¡Gran Desempeño! Conocen bien las fórmulas, solo falta un poco más de velocidad.';
+            } else {
+                perfText = '📘 ¡Sigue Practicando! Revisa la Guía de Fórmulas para memorizar los productos notables.';
+            }
+            document.getElementById('perfBadge').innerText = perfText;
+
+            // Trigger confetti
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        function showSetupScreen() {
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('setupScreen').classList.remove('hidden');
+        }
+
+        // Initialize setup screen mode selector
+        selectMode(2);
+    </script>
+</body>
+</html>
